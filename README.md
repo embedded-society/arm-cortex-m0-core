@@ -1,6 +1,6 @@
 # arm-cortex-m0-core
 
-A header-only C++20 library for accessing ARM Cortex-M0 core peripherals.
+CMSIS-like header-only C++20 library for accessing ARM Cortex-M0 core peripherals.
 
 ## Usage
 
