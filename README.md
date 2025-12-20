@@ -1,6 +1,6 @@
 # arm-cortex-m0-core
 
-A minimal, header-only C++20 library for accessing ARM Cortex-M0 core peripherals. No dependencies, no opinions — just drop it into your project.
+A header-only C++20 library for accessing ARM Cortex-M0 core peripherals.
 
 ## Usage
 
