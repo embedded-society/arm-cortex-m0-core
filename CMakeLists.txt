@@ -1,4 +1,4 @@
-# Copyright (C) 2025 The Embedded Society <https://github.com/embedded-society/arm-cortex-m0-core>
+# Copyright (C) 2026 The Embedded Society <https://github.com/embedded-society/arm-cortex-m0-core>
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
