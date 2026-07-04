@@ -1,0 +1,10 @@
+{
+    // Lint every Markdown file in the repo unless explicitly ignored below.
+    // Running `markdownlint-cli2` with no CLI glob picks this up, so local
+    // runs and CI stay in sync.
+    "globs": ["**/*.md"],
+
+    // Files owned by upstream — do not modify
+    // GitHub issue templates have their own format requirements (frontmatter, etc.)
+    "ignores": [".github/ISSUE_TEMPLATE/**", "node_modules"]
+}

@@ -1,0 +1,13 @@
+{
+    "name": "arm-cortex-m0-core-lint",
+    "version": "0.0.0",
+    "private": true,
+    "description": "Local tooling for linting the Markdown docs in this repository. Not published.",
+    "scripts": {
+        "lint": "markdownlint-cli2",
+        "lint:fix": "markdownlint-cli2 --fix"
+    },
+    "devDependencies": {
+        "markdownlint-cli2": "0.23.0"
+    }
+}

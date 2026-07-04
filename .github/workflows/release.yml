@@ -1,0 +1,158 @@
+name: Release
+
+# Read-only by default. Only the `release` job needs `contents: write`
+# to create the GitHub release — declared on the job itself, following
+# least-privilege.
+permissions:
+    contents: read
+
+on:
+    push:
+        tags:
+            - "v[0-9]+.[0-9]+.[0-9]+"
+
+# Serialise releases per-tag so re-running a tag (or pushing two tags
+# back-to-back) doesn't race on the same GitHub release page. Don't
+# cancel an in-progress release — a half-created release is worse than
+# a queued duplicate.
+concurrency:
+    group: release-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    validate:
+        name: Validate Release
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+
+        # Read-only: validate just inspects the tag.
+        permissions:
+            contents: read
+
+        outputs:
+            version: ${{ steps.version.outputs.version }}
+            tag: ${{ steps.version.outputs.tag }}
+
+        steps:
+            - name: Determine version
+              id: version
+              shell: bash
+              run: |
+                TAG="${GITHUB_REF#refs/tags/}"
+
+                # The push trigger already filters on the tag glob, but the
+                # glob can't fully anchor SemVer — re-validate here so a
+                # malformed tag fails loudly instead of producing a bad release.
+                if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    echo "Error: Invalid tag format: $TAG"
+                    echo "Expected format: v0.0.0"
+                    exit 1
+                fi
+
+                VERSION="${TAG#v}"
+                echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+                echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+                echo "Release version: $VERSION (tag: $TAG)"
+
+    release:
+        name: Create Release
+        needs: validate
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        # The only job that needs elevated scope:
+        #   contents: write     — create the GitHub release and upload the asset
+        #   id-token: write      — mint the OIDC token that signs the attestation
+        #   attestations: write  — record build provenance for the release bundle
+        permissions:
+            contents: write
+            id-token: write
+            attestations: write
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+            - name: Extract release notes from CHANGELOG
+              id: release-notes
+              shell: bash
+              run: |
+                VERSION="${{ needs.validate.outputs.version }}"
+
+                # Extract the notes for this version from CHANGELOG.md.
+                # index()==1 is a literal (non-regex) prefix match on the
+                # "## [x.y.z]" heading; we print until the next "## [" heading.
+                awk -v ver="## [${VERSION}]" '
+                    index($0, ver) == 1 { found=1; next }
+                    found && /^## \[/ { exit }
+                    found { print }
+                ' CHANGELOG.md > release_notes.md
+
+                # Trim leading, then trailing, blank lines.
+                sed -i '/./,$!d' release_notes.md
+                sed -i ':a;/^[[:space:]]*$/{$d;N;ba}' release_notes.md
+
+                if [[ -s release_notes.md ]]; then
+                    echo "Found release notes in CHANGELOG.md:"
+                else
+                    echo "No CHANGELOG entry for ${VERSION}, using default"
+                    echo "Release ${VERSION}" > release_notes.md
+                fi
+
+                echo "--- Release Notes ---"
+                cat release_notes.md
+
+            - name: Build release bundle
+              id: bundle
+              shell: bash
+              run: |
+                TAG="${{ needs.validate.outputs.tag }}"
+                DIR="arm-cortex-m0-core-${TAG}"
+                ZIP="${DIR}.zip"
+
+                # Assemble a curated, consumable bundle — the library a
+                # consumer add_subdirectory()s, not the repo's CI, tooling,
+                # and governance documents. Preserve the include/ layout so
+                # the headers resolve under <arm-cortex-m0-core/...>.
+                mkdir "$DIR"
+                cp -r include "$DIR/"
+                cp CMakeLists.txt CHANGELOG.md LICENCE "$DIR/"
+
+                # A bundle-specific README that points back to the project and
+                # invites contributions. Substitute the release version into it.
+                sed "s/__VERSION__/${TAG}/g" .github/release-assets/README.md > "$DIR/README.md"
+
+                zip -r "$ZIP" "$DIR"
+                echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+
+                echo "--- Bundle contents ---"
+                unzip -l "$ZIP"
+
+            # Sign a build-provenance attestation for the bundle: a verifiable
+            # record that *this* workflow, from *this* commit, produced this
+            # exact archive. Consumers can check it with
+            # `gh attestation verify <zip> --repo embedded-society/arm-cortex-m0-core`.
+            - name: Attest build provenance
+              uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
+              with:
+                subject-path: ${{ steps.bundle.outputs.zip }}
+
+            - name: Create GitHub Release
+              shell: bash
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                TAG="${{ needs.validate.outputs.tag }}"
+                ZIP="${{ steps.bundle.outputs.zip }}"
+
+                # gh CLI is more reliable than third-party release actions.
+                # Only clean vX.Y.Z tags reach this workflow, so every release
+                # is a stable one and is marked "latest". The curated bundle
+                # is attached as a release asset alongside the notes.
+                gh release create "$TAG" \
+                    --title "$TAG" \
+                    --notes-file release_notes.md \
+                    --latest \
+                    "$ZIP"
+
+                echo "Release created: $TAG (asset: $ZIP)"

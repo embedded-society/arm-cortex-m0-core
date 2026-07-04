@@ -35,7 +35,6 @@ namespace ArmCortex {
 
     static constexpr bool isIrqNumber(uint8_t exception)
     {
-        return ((exception >= static_cast<uint8_t>(ExceptionNumber::FIRST_IRQ)) &&
-            (exception <= static_cast<uint8_t>(ExceptionNumber::LAST_IRQ)));
+        return ((exception >= static_cast<uint8_t>(ExceptionNumber::FIRST_IRQ)) && (exception <= static_cast<uint8_t>(ExceptionNumber::LAST_IRQ)));
     }
 }
