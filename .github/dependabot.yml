@@ -1,14 +1,33 @@
 version: 2
 updates:
+    # GitHub Actions: small dependency surface (checkout, setup-node,
+    # cache, github-script). Group everything into one weekly PR to keep
+    # the review flow light.
     - package-ecosystem: "github-actions"
       directory: "/"
       schedule:
-          interval: "weekly"
-          day: "saturday"
-          time: "00:00"
-          timezone: "UTC"
+        interval: "weekly"
+        day: "saturday"
+        time: "00:00"
+        timezone: "UTC"
       groups:
-          github-actions:
-              patterns: ["*"]
-              update-types: ["major", "minor", "patch"]
+        github-actions:
+            patterns: ["*"]
+            update-types: ["major", "minor", "patch"]
+      labels: ["dependencies"]
+
+    # npm: markdownlint-cli2 tooling only, pinned in package.json.
+    # Dependabot bumps the lockfile; the same weekly cadence batches the
+    # review.
+    - package-ecosystem: "npm"
+      directory: "/"
+      schedule:
+        interval: "weekly"
+        day: "saturday"
+        time: "00:00"
+        timezone: "UTC"
+      groups:
+        npm:
+            patterns: ["*"]
+            update-types: ["major", "minor", "patch"]
       labels: ["dependencies"]

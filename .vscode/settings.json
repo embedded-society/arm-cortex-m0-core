@@ -1,0 +1,12 @@
+{
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.trimAutoWhitespace": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.encoding": "utf8",
+    "editor.renderWhitespace": "boundary",
+    "[markdown]": {
+        "files.trimTrailingWhitespace": false
+    }
+}

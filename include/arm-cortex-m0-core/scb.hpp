@@ -21,8 +21,7 @@
 namespace ArmCortex::Scb {
     inline constexpr uintptr_t BASE_ADDRESS = 0xE000ED00u;
 
-    struct Registers
-    {
+    struct Registers {
         volatile uint32_t CPUID; //!< Processor part number, version, and implementation information.
         volatile uint32_t ICSR; //!< Interrupt control and state register.
         volatile uint32_t RESERVED0;
@@ -213,7 +212,7 @@ namespace ArmCortex::Scb {
     {
         asm volatile("dsb sy" ::: "memory");
 
-        AIRCR aircr { SCB->AIRCR };
+        AIRCR aircr{SCB->AIRCR};
 
         aircr.bits.VECTCLRACTIVE = 0;
         aircr.bits.SYSRESETREQ = true;
@@ -224,7 +223,8 @@ namespace ArmCortex::Scb {
         asm volatile("dsb sy" ::: "memory");
         asm volatile("isb sy" ::: "memory");
 
-        while(true);
+        while (true)
+            ;
     }
 
     // =========================================================================
@@ -234,7 +234,7 @@ namespace ArmCortex::Scb {
     //! Check if SysTick exception is pending.
     [[gnu::always_inline]] static inline bool isSysTickPending()
     {
-        ICSR icsr { SCB->ICSR };
+        ICSR icsr{SCB->ICSR};
         return icsr.bits.PENDSTSET;
     }
 
@@ -255,7 +255,7 @@ namespace ArmCortex::Scb {
     //! Check if PendSV exception is pending.
     [[gnu::always_inline]] static inline bool isPendSVPending()
     {
-        ICSR icsr { SCB->ICSR };
+        ICSR icsr{SCB->ICSR};
         return icsr.bits.PENDSVSET;
     }
 
@@ -276,7 +276,7 @@ namespace ArmCortex::Scb {
     //! Check if NMI exception is pending.
     [[gnu::always_inline]] static inline bool isNMIPending()
     {
-        ICSR icsr { SCB->ICSR };
+        ICSR icsr{SCB->ICSR};
         return icsr.bits.NMIPENDSET;
     }
 

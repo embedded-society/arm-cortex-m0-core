@@ -1,0 +1,16 @@
+{
+    "recommendations": [
+        "davidanson.vscode-markdownlint",
+        "donjayamanne.githistory",
+        "editorconfig.editorconfig",
+        "felipecaputo.git-project-manager",
+        "github.vscode-github-actions",
+        "Gruntfuggly.todo-tree",
+        "ms-vscode.cmake-tools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.cpptools-themes",
+        "ms-vscode.notepadplusplus-keybindings",
+        "redhat.vscode-yaml",
+        "usernamehw.errorlens"
+    ]
+}

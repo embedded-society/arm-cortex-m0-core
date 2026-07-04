@@ -21,8 +21,7 @@
 namespace ArmCortex::SysTick {
     inline constexpr uintptr_t BASE_ADDRESS = 0xE000E010u;
 
-    struct Registers
-    {
+    struct Registers {
         volatile uint32_t CTRL; //!< Control and status register.
         volatile uint32_t LOAD; //!< Reload value.
         volatile uint32_t VAL; //!< Current counter value.

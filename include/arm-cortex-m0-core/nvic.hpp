@@ -22,8 +22,7 @@
 namespace ArmCortex::Nvic {
     inline constexpr uintptr_t BASE_ADDRESS = 0xE000E100u;
 
-    struct Registers
-    {
+    struct Registers {
         volatile uint32_t ISER; //!< Interrupt set-enable register (W1S).
         volatile uint32_t RESERVED0[31];
         volatile uint32_t ICER; //!< Interrupt clear-enable register (W1C).

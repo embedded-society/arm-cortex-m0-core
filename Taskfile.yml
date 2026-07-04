@@ -1,0 +1,39 @@
+# Task runner definitions for local Markdown linting.
+# See https://taskfile.dev — install with `go install github.com/go-task/task/v3/cmd/task@latest`
+# or `winget install Task.Task` / `brew install go-task`.
+#
+# markdownlint-cli2 is pinned in package.json; `npm ci` installs the exact
+# version from package-lock.json. Globs and ignores live in
+# .markdownlint-cli2.jsonc, so these tasks pass no file arguments and stay
+# in sync with CI (which runs the same npm scripts).
+version: "3"
+
+tasks:
+    default:
+        desc: List available tasks
+        cmds:
+            - task --list
+        silent: true
+
+    install:
+        desc: Install the pinned linting tooling from package-lock.json
+        cmds:
+            - npm ci
+        # Skip reinstalling when node_modules is already up to date with
+        # the lockfile.
+        status:
+            - test -d node_modules
+        sources:
+            - package-lock.json
+
+    lint:
+        desc: Lint all Markdown files (fails on any violation)
+        deps: [install]
+        cmds:
+            - npm run lint
+
+    fix:
+        desc: Auto-fix fixable Markdown violations in place
+        deps: [install]
+        cmds:
+            - npm run lint:fix

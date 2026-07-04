@@ -1,0 +1,44 @@
+name: Cleanup GitHub Actions Caches
+
+# Manual trigger only — use to proactively clean up caches. The main-branch
+# workflow already prunes on every push; this is the on-demand escape hatch.
+on:
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: 'Log actions without deleting (for testing)'
+                required: false
+                type: boolean
+                # Default to a safe dry run: an accidental manual trigger
+                # then only logs what it *would* delete. Set to false to
+                # actually delete caches.
+                default: true
+
+# Never run two cache cleanups concurrently — they race on the same
+# REST cache list. Don't cancel an in-progress cleanup.
+concurrency:
+    group: cleanup-caches
+    cancel-in-progress: false
+
+jobs:
+    cleanup:
+        name: Cleanup Caches
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+
+        permissions:
+            actions: write
+            contents: read
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+            - name: Run cleanup script
+              uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+              env:
+                INPUT_DRY_RUN: ${{ inputs.dry_run || false }}
+              with:
+                script: |
+                    const cleanupScript = require('./.github/scripts/cleanup-caches.js');
+                    await cleanupScript({ github, context, core });

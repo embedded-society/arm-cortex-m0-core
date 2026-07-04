@@ -1,0 +1,127 @@
+Language: Cpp
+BasedOnStyle: LLVM
+
+# Indentation (matches .editorconfig)
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+IndentCaseLabels: false
+IndentCaseBlocks: false
+IndentGotoLabels: false
+IndentPPDirectives: None
+NamespaceIndentation: All
+AccessModifierOffset: -4
+
+# Brace wrapping - Allman for functions/namespaces, attached for classes/structs/enums
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: false
+  AfterControlStatement: Never
+  AfterEnum: false
+  AfterFunction: true
+  AfterNamespace: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterExternBlock: true
+  BeforeCatch: false
+  BeforeElse: false
+  BeforeLambdaBody: false
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+# Line length
+ColumnLimit: 170
+
+# Pointer/reference alignment
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+
+# Constructor initializers
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerIndentWidth: 4
+PackConstructorInitializers: Never
+
+# No alignment of consecutive things
+AlignAfterOpenBracket: DontAlign
+AlignArrayOfStructures: None
+AlignConsecutiveAssignments: None
+AlignConsecutiveBitFields: None
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: None
+AlignEscapedNewlines: Left
+AlignOperands: DontAlign
+AlignTrailingComments: false
+
+# Includes
+IncludeBlocks: Preserve
+SortIncludes: Never
+
+# Short forms - mostly disabled
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: false
+
+# Spaces
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: Never
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals: true
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Bitfields — space after the colon only (matches the datasheet-style register maps)
+BitFieldColonSpacing: After
+
+# Keep a template declaration on its own line above the entity it templates
+AlwaysBreakTemplateDeclarations: Yes
+
+# Braced lists
+Cpp11BracedListStyle: true
+
+# Penalties - prefer filling lines before wrapping
+PenaltyBreakAssignment: 1000
+PenaltyBreakBeforeFirstCallParameter: 1000
+PenaltyBreakOpenParenthesis: 1000
+
+# Other
+BinPackArguments: true
+BinPackParameters: true
+BreakBeforeBinaryOperators: All
+BreakBeforeTernaryOperators: true
+BreakStringLiterals: true
+CompactNamespaces: false
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: LogicalBlock
+FixNamespaceComments: false
+IndentWrappedFunctionNames: false
+InsertBraces: true
+InsertNewlineAtEOF: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+LambdaBodyIndentation: Signature
+MaxEmptyLinesToKeep: 1
+ReflowComments: false
+SeparateDefinitionBlocks: Leave
